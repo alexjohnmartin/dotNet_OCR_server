@@ -21,7 +21,7 @@ namespace LicensePlateRecognition
         {
             _licensePlateDetector = new LicensePlateDetector();
 
-            var image = new Image<Bgr, byte>("license-plate.jpg");
+            var image = new Image<Bgr, byte>("license-plate2.jpg");
 
             // time the detection process
             Stopwatch watch = Stopwatch.StartNew();
@@ -44,8 +44,6 @@ namespace LicensePlateRecognition
         static void Main(string[] args)
         {
             var result = LicensePlateRecognitionInit();
-            Console.WriteLine(result);
-            Console.ReadKey();
         }
     }
 }
