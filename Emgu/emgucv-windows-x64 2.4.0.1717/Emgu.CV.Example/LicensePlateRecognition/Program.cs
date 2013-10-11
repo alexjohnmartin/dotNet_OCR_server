@@ -1,21 +1,17 @@
-//----------------------------------------------------------------------------
-//  Copyright (C) 2004-2012 by EMGU. All rights reserved.       
-//----------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Emgu.CV;
+using Emgu.CV.OCR;
 using Emgu.CV.Structure;
-using Emgu.Util;
-using System.Runtime.InteropServices;
 
 namespace LicensePlateRecognition
 {
     class Program
     {
         private static LicensePlateDetector _licensePlateDetector;
+        private static Tesseract _ocr;
 
         private static List<string> LicensePlateRecognitionInit()
         {
@@ -41,9 +37,46 @@ namespace LicensePlateRecognition
             return words;
         }
 
+        private static string OcrInitalizer()
+        {
+            _ocr = new Tesseract("tessdata", "eng", Tesseract.OcrEngineMode.OEM_TESSERACT_CUBE_COMBINED);
+            _ocr.Init(@"C:\Users\Nino\Documents\PbpHackthone\dotNet_OCR_server\Emgu\emgucv-windows-x64 2.4.0.1717\bin","eng", Tesseract.OcrEngineMode.OEM_DEFAULT);
+
+            string result = string.Empty;
+            try
+            {
+                var image = new Image<Bgr, byte>("IMAG0253_cropped.jpg");
+                
+
+                using (Image<Gray, byte> gray = image.Convert<Gray, Byte>())
+                {
+                    gray.Save(@"C:\Users\Nino\Desktop\IMAG0253_cropped.jpg");
+                    
+                    Stopwatch watch = new Stopwatch();
+                    watch.Start();
+                   
+                    _ocr.Recognize(gray);
+                    Tesseract.Charactor[] charactors = _ocr.GetCharactors();
+                    
+                    //String text = String.Concat( Array.ConvertAll(charactors, delegate(Tesseract.Charactor t) { return t.Text; }) );
+                    result = _ocr.GetText();
+                    watch.Stop();
+
+                    var total = watch.ElapsedMilliseconds;
+                }
+            }
+            catch (Exception exception)
+            {
+               
+            }
+
+            return result;
+        }
+
         static void Main(string[] args)
         {
-            var result = LicensePlateRecognitionInit();
+            //var result = LicensePlateRecognitionInit();
+            var ocrResult = OcrInitalizer();
         }
     }
 }
