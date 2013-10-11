@@ -20,14 +20,10 @@ namespace ImageProcessingCore
         /// <summary>
         /// Create a license plate detector
         /// </summary>
-        /// <param name="dataPath">
-        /// The datapath must be the name of the parent directory of tessdata and
-        /// must end in / . Any name after the last / will be stripped.
-        /// </param>
-        public LicensePlateDetector(String dataPath)
+        public LicensePlateDetector()
         {
             //create OCR engine
-            _ocr = new Tesseract(dataPath, "eng", Tesseract.OcrEngineMode.OEM_TESSERACT_CUBE_COMBINED);
+            _ocr = new Tesseract("tessdata", "eng", Tesseract.OcrEngineMode.OEM_TESSERACT_CUBE_COMBINED);
             _ocr.SetVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNOPQRSTUVWXYZ-1234567890");
         }
 
@@ -71,25 +67,24 @@ namespace ImageProcessingCore
         /// <param name="detectedLicensePlateRegionList">A list where the regions of license plate (defined by an MCvBox2D) are stored</param>
         /// <returns>The list of words for each license plate</returns>
         public List<String> DetectLicensePlate(
-            Image<Bgr, byte> img,
-            List<Image<Gray, Byte>> licensePlateImagesList,
-            List<Image<Gray, Byte>> filteredLicensePlateImagesList,
-            List<MCvBox2D> detectedLicensePlateRegionList)
+           Image<Bgr, byte> img,
+           List<Image<Gray, Byte>> licensePlateImagesList,
+           List<Image<Gray, Byte>> filteredLicensePlateImagesList,
+           List<MCvBox2D> detectedLicensePlateRegionList)
         {
             List<String> licenses = new List<String>();
             using (Image<Gray, byte> gray = img.Convert<Gray, Byte>())
-                //using (Image<Gray, byte> gray = GetWhitePixelMask(img))
+            //using (Image<Gray, byte> gray = GetWhitePixelMask(img))
             using (Image<Gray, Byte> canny = new Image<Gray, byte>(gray.Size))
             using (MemStorage stor = new MemStorage())
             {
                 CvInvoke.cvCanny(gray, canny, 100, 50, 3);
 
                 Contour<Point> contours = canny.FindContours(
-                    Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
-                    Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_TREE,
-                    stor);
-                FindLicensePlate(contours, gray, canny, licensePlateImagesList, filteredLicensePlateImagesList,
-                                 detectedLicensePlateRegionList, licenses);
+                     Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
+                     Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_TREE,
+                     stor);
+                FindLicensePlate(contours, gray, canny, licensePlateImagesList, filteredLicensePlateImagesList, detectedLicensePlateRegionList, licenses);
             }
             return licenses;
         }
@@ -108,10 +103,9 @@ namespace ImageProcessingCore
         }
 
         private void FindLicensePlate(
-            Contour<Point> contours, Image<Gray, Byte> gray, Image<Gray, Byte> canny,
-            List<Image<Gray, Byte>> licensePlateImagesList, List<Image<Gray, Byte>> filteredLicensePlateImagesList,
-            List<MCvBox2D> detectedLicensePlateRegionList,
-            List<String> licenses)
+           Contour<Point> contours, Image<Gray, Byte> gray, Image<Gray, Byte> canny,
+           List<Image<Gray, Byte>> licensePlateImagesList, List<Image<Gray, Byte>> filteredLicensePlateImagesList, List<MCvBox2D> detectedLicensePlateRegionList,
+           List<String> licenses)
         {
             for (; contours != null; contours = contours.HNext)
             {
@@ -125,8 +119,7 @@ namespace ImageProcessingCore
                     {
                         //If the contour has less than 3 children, it is not a license plate (assuming license plate has at least 3 charactor)
                         //However we should search the children of this contour to see if any of them is a license plate
-                        FindLicensePlate(contours.VNext, gray, canny, licensePlateImagesList,
-                                         filteredLicensePlateImagesList, detectedLicensePlateRegionList, licenses);
+                        FindLicensePlate(contours.VNext, gray, canny, licensePlateImagesList, filteredLicensePlateImagesList, detectedLicensePlateRegionList, licenses);
                         continue;
                     }
 
@@ -146,27 +139,24 @@ namespace ImageProcessingCore
                         box.angle -= 90.0f;
                     }
 
-                    double whRatio = (double) box.size.Width/box.size.Height;
+                    double whRatio = (double)box.size.Width / box.size.Height;
                     if (!(3.0 < whRatio && whRatio < 10.0))
-                        //if (!(1.0 < whRatio && whRatio < 2.0))
-                    {
-                        //if the width height ratio is not in the specific range,it is not a license plate 
+                    //if (!(1.0 < whRatio && whRatio < 2.0))
+                    {  //if the width height ratio is not in the specific range,it is not a license plate 
                         //However we should search the children of this contour to see if any of them is a license plate
                         Contour<Point> child = contours.VNext;
                         if (child != null)
-                            FindLicensePlate(child, gray, canny, licensePlateImagesList, filteredLicensePlateImagesList,
-                                             detectedLicensePlateRegionList, licenses);
+                            FindLicensePlate(child, gray, canny, licensePlateImagesList, filteredLicensePlateImagesList, detectedLicensePlateRegionList, licenses);
                         continue;
                     }
 
                     using (Image<Gray, Byte> tmp1 = gray.Copy(box))
-                        //resize the license plate such that the front is ~ 10-12. This size of front results in better accuracy from tesseract
+                    //resize the license plate such that the front is ~ 10-12. This size of front results in better accuracy from tesseract
                     using (Image<Gray, Byte> tmp2 = tmp1.Resize(240, 180, Emgu.CV.CvEnum.INTER.CV_INTER_CUBIC, true))
                     {
                         //removes some pixels from the edge
                         int edgePixelSize = 2;
-                        tmp2.ROI = new Rectangle(new Point(edgePixelSize, edgePixelSize),
-                                                 tmp2.Size - new Size(2*edgePixelSize, 2*edgePixelSize));
+                        tmp2.ROI = new Rectangle(new Point(edgePixelSize, edgePixelSize), tmp2.Size - new Size(2 * edgePixelSize, 2 * edgePixelSize));
                         Image<Gray, Byte> plate = tmp2.Copy();
 
                         Image<Gray, Byte> filteredPlate = FilterPlate(plate);
@@ -206,25 +196,22 @@ namespace ImageProcessingCore
             Image<Gray, Byte> thresh = plate.ThresholdBinaryInv(new Gray(120), new Gray(255));
 
             using (Image<Gray, Byte> plateMask = new Image<Gray, byte>(plate.Size))
-            using (Image<Gray, Byte> plateCanny = plate.Canny(100, 50))
+            using (Image<Gray, Byte> plateCanny = plate.Canny(new Gray(100), new Gray(50)))
             using (MemStorage stor = new MemStorage())
             {
                 plateMask.SetValue(255.0);
                 for (
-                    Contour<Point> contours = plateCanny.FindContours(
-                        Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
-                        Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_EXTERNAL,
-                        stor);
-                    contours != null;
-                    contours = contours.HNext)
+                   Contour<Point> contours = plateCanny.FindContours(
+                      Emgu.CV.CvEnum.CHAIN_APPROX_METHOD.CV_CHAIN_APPROX_SIMPLE,
+                      Emgu.CV.CvEnum.RETR_TYPE.CV_RETR_EXTERNAL,
+                      stor);
+                   contours != null;
+                   contours = contours.HNext)
                 {
                     Rectangle rect = contours.BoundingRectangle;
                     if (rect.Height > (plate.Height >> 1))
                     {
-                        rect.X -= 1;
-                        rect.Y -= 1;
-                        rect.Width += 2;
-                        rect.Height += 2;
+                        rect.X -= 1; rect.Y -= 1; rect.Width += 2; rect.Height += 2;
                         rect.Intersect(plate.ROI);
 
                         plateMask.Draw(rect, new Gray(0.0), -1);
@@ -245,5 +232,4 @@ namespace ImageProcessingCore
             _ocr.Dispose();
         }
     }
-
 }
