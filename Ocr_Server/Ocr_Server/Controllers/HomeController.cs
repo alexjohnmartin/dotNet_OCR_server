@@ -1,5 +1,7 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Mvc;
+using Ocr_Server.Models;
 
 namespace Ocr_Server.Controllers
 {
@@ -11,12 +13,20 @@ namespace Ocr_Server.Controllers
         }
 
         [HttpPost]
-        public ActionResult uploadImage(HttpPostedFileBase file, int userId)
+        public ActionResult requestParkingQuote(HttpPostedFileBase file, int userId)
         {
-            if (file != null && file.ContentLength > 0) 
-                return new HttpStatusCodeResult(200);
+            var model = new QuoteModel{LocationId = 1, LocationName = "Impark Vancouver", Price = 3.45m, QuoteId = Guid.NewGuid()};
+            var response = new JsonResult();
+            response.Data = model; 
+            return response;
+        }
 
-            return new HttpStatusCodeResult(400);
+        [HttpPost]
+        public ActionResult confirmParking(Guid quoteId)
+        {
+            var response = new JsonResult();
+            response.Data = new {result = "success"};
+            return response;
         }
     }
 }
