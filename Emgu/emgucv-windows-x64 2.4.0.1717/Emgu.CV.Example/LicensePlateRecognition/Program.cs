@@ -40,10 +40,13 @@ namespace LicensePlateRecognition
         private static string OcrInitalizer()
         {
             _ocr = new Tesseract("tessdata", "eng", Tesseract.OcrEngineMode.OEM_TESSERACT_CUBE_COMBINED);
+            _ocr.Init(@"C:\Users\Nino\Documents\PbpHackthone\dotNet_OCR_server\Emgu\emgucv-windows-x64 2.4.0.1717\bin","eng", Tesseract.OcrEngineMode.OEM_DEFAULT);
+
             string result = string.Empty;
             try
             {
                 var image = new Image<Bgr, byte>("IMAG0253_cropped.jpg");
+                
 
                 using (Image<Gray, byte> gray = image.Convert<Gray, Byte>())
                 {
