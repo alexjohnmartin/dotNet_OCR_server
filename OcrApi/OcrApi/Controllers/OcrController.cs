@@ -11,12 +11,6 @@ namespace OcrApi.Controllers
 {
     public class OcrController : ApiController
     {
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         public HttpResponseMessage<ParkingConfirmation> Post(ParkingDetails id)
         {
             //if (parkingDetails.LocationFile != null && parkingDetails.LocationFile.ContentLength > 0)
