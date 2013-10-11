@@ -43,14 +43,11 @@ namespace LicensePlateRecognition
             string result = string.Empty;
             try
             {
-                var image = new Image<Bgr, byte>("IMAG0280.jpg");
-
-
-
+                var image = new Image<Bgr, byte>("IMAG0253_cropped.jpg");
 
                 using (Image<Gray, byte> gray = image.Convert<Gray, Byte>())
                 {
-                    gray.Save(@"C:\Users\Nino\DesktopIMAG0280.jpg");
+                    gray.Save(@"C:\Users\Nino\Desktop\IMAG0253_cropped.jpg");
                     
                     Stopwatch watch = new Stopwatch();
                     watch.Start();
