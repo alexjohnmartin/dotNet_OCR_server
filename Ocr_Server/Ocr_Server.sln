@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ocr_Server", "Ocr_Server\Ocr_Server.csproj", "{2295ADE4-0E00-417F-90F1-C381C8AC439B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2295ADE4-0E00-417F-90F1-C381C8AC439B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2295ADE4-0E00-417F-90F1-C381C8AC439B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2295ADE4-0E00-417F-90F1-C381C8AC439B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2295ADE4-0E00-417F-90F1-C381C8AC439B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
