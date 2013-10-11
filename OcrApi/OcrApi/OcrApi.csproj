@@ -151,6 +151,7 @@
     </Compile>
     <Compile Include="HttpExtentions\HttpRequestExtensions.cs" />
     <Compile Include="HttpExtentions\HttpResponseMessage.cs" />
+    <Compile Include="Models\ConfirmationStatus.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\ParkingConfirmation.cs" />
     <Compile Include="Models\ParkingDetails.cs" />

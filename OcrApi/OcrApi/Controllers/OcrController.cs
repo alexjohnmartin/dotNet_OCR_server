@@ -32,5 +32,14 @@ namespace OcrApi.Controllers
 
             return Request.CreateResponse(result);
         }
+
+        public HttpResponseMessage<ConfirmationStatus> Post(ParkingConfirmation parkingConfirmation)
+        {
+            var result = new ConfirmationStatus()
+                {
+                    Succeed = true
+                };
+            return Request.CreateResponse(result);
+        }
     }
 }
